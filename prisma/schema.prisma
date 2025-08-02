@@ -1,0 +1,40 @@
+generator client {
+  provider        = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRESQL_ADDRESS")
+  directUrl = env("DIRECT_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  id       String   @id @default(uuid())
+  name     String
+  email    String   @unique
+  password String
+  joinedAt  DateTime @default(now())
+  articles Article[]
+}
+
+model Article {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime   @default(now())
+  createdBy String
+  summary   String?    
+  revisions Revision[]
+
+  author User @relation(fields: [createdBy], references: [id])
+}
+
+model Revision {
+  id        String   @id @default(uuid())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  title     String   @default("")
+  articleId String
+  content   String
+  createdAt DateTime @default(now())
+}
