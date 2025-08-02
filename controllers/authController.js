@@ -22,7 +22,7 @@ exports.signup = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -51,7 +51,7 @@ exports.login = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -77,7 +77,7 @@ exports.getMe = async (req, res) => {
 
     res.json({ id: user.id, name: user.name, email: user.email });
   } catch (err) {
-    res.status(401).json({ message: "Invalid token" });
+    res.status(400).json({ message: "Invalid token" });
   }
 };
 
